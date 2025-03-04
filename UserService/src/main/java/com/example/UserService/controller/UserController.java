@@ -22,11 +22,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Integer id) {
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Integer id) {
         try{
             return ResponseEntity.ok(userService.getUserById(id));
         } catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+//            return ResponseEntity.badRequest().body(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 

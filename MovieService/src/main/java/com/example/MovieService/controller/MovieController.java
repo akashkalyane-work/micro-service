@@ -23,11 +23,12 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Integer id) {
+    public ResponseEntity<MovieResponseDto> getMovieById(@PathVariable Integer id) {
         try{
             return ResponseEntity.ok(movieService.getMovieById(id));
         } catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+//            return ResponseEntity.badRequest().body(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 

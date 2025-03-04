@@ -2,6 +2,8 @@ package com.example.BookingService.service.impl;
 
 import com.example.BookingService.dto.BookingRequestDto;
 import com.example.BookingService.dto.BookingResponseDto;
+import com.example.BookingService.dto.MovieResponseDto;
+import com.example.BookingService.dto.UserResponseDto;
 import com.example.BookingService.entity.*;
 import com.example.BookingService.repository.*;
 import com.example.BookingService.service.BookingService;
@@ -22,6 +24,10 @@ public class BookingServiceImpl implements BookingService {
     private TheaterScreenRepository theaterScreenRepository;
     @Autowired
     private SlotRepository slotRepository;
+    @Autowired
+    private MovieFeignClient movieFeignClient;
+    @Autowired
+    private UserFeignClient userFeignClient;
 
     @Override
     public List<BookingResponseDto> getBookings() {
@@ -44,16 +50,13 @@ public class BookingServiceImpl implements BookingService {
 
         List<String> errors = new ArrayList<>();
 
-        // fix this
-
-//        if(bookingRequestDto.getMovieId() == 0)
-//            errors.add("Movie Id required");
-//        else {
-//            Movie movie = movieRepository.findById(bookingRequestDto.getMovieId())
-//                    .orElse( null );
-//            if(movie == null)
-//                errors.add("Movie Id does not exist");
-//        }
+        if(bookingRequestDto.getMovieId() == 0)
+            errors.add("Movie Id required");
+        else {
+            MovieResponseDto movie = movieFeignClient.getMovieById(bookingRequestDto.getMovieId());
+            if(movie == null)
+                errors.add("Movie Id does not exist");
+        }
 
         if(bookingRequestDto.getTheaterScreenId() == 0)
             errors.add("Theater screen Id required");
@@ -73,16 +76,13 @@ public class BookingServiceImpl implements BookingService {
                 errors.add("Slot Id does not exist");
         }
 
-        // fix this
-
-//        if(bookingRequestDto.getCreatedBy() == 0)
-//            errors.add("User Id required");
-//        else {
-//            User user = userRepository.findById(bookingRequestDto.getSlotId())
-//                    .orElse( null );
-//            if(user == null)
-//                errors.add("User Id does not exist");
-//        }
+        if(bookingRequestDto.getCreatedBy() == 0)
+            errors.add("User Id required");
+        else {
+            UserResponseDto user = userFeignClient.getUserById(bookingRequestDto.getSlotId());
+            if(user == null)
+                errors.add("User Id does not exist");
+        }
 
         if (!errors.isEmpty())
             throw new RuntimeException(String.join("\n", errors));

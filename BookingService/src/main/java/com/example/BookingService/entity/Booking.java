@@ -1,5 +1,6 @@
 package com.example.BookingService.entity;
 
+import com.example.BookingService.dto.MovieResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,7 +56,7 @@ public class Booking {
     @Column
     private LocalDateTime deletedOn;
 
-    transient Movie movieDB;
+    transient MovieResponseDto movieDB;
 
 
 }
