@@ -41,16 +41,7 @@ public class JwtService {
                 .getPayload();
     }
 
-    public boolean validateToken(String token) {
-        Jwts.parser()
-                .verifyWith(getKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-        return isTokenExpired(token);
-    }
-
-    private boolean isTokenExpired(String token){
+    public boolean isTokenExpired(String token){
         return extractExpiration(token).before(new Date());
     }
 

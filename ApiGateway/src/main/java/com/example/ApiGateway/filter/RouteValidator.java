@@ -19,11 +19,4 @@ public class RouteValidator {
                     .stream()
                     .noneMatch(uri->request.getURI().getPath().contains(uri));
 
-    public boolean IsAuthenticated(String path, String role){
-        if(Objects.equals(role, "admin") && path.startsWith("/api/**")){
-            return true;
-        }
-        return Objects.equals(role, "user") && path.startsWith("/api/users");
-    }
-
 }

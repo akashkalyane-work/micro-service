@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Objects;
+
 @Component
 public class ApplicationFilter extends AbstractGatewayFilterFactory<ApplicationFilter.Config> {
 
@@ -35,8 +37,15 @@ public class ApplicationFilter extends AbstractGatewayFilterFactory<ApplicationF
                     authHeader = authHeader.substring(7);
                 }
                 try{
-                    jwtService.validateToken(authHeader);
-                    if(!routeValidator.IsAuthenticated(exchange.getRequest().getURI().getPath(), jwtService.getRole(authHeader))){
+                    String role = jwtService.getRole(authHeader);
+                    String path = exchange.getRequest().getPath().toString();
+                    jwtService.isTokenExpired(authHeader);
+                    if(path.startsWith("/api/users") || path.startsWith("/api/bookings") && Objects.equals(role, "user")){
+                        return chain.filter(exchange);
+                    } else if(path.startsWith("/api") && Objects.equals(role, "admin")){
+                        return chain.filter(exchange);
+                    }
+                    else {
                         exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                         return exchange.getResponse().setComplete();
                     }
